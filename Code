@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>📝 Minimal Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Segoe UI", sans-serif;
+    }
+
+    body {
+      background-color: #000;
+      color: #fff;
+      overflow-x: hidden;
+    }
+
+    nav {
+      position: fixed;
+      width: 100%;
+      background-color: rgba(0, 0, 0, 0.85);
+      padding: 1rem 2rem;
+      z-index: 1000;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+    }
+
+    nav h1 {
+      font-size: 1.5rem;
+      color: #fff;
+      letter-spacing: 2px;
+    }
+
+    nav ul {
+      display: flex;
+      list-style: none;
+    }
+
+    nav ul li {
+      margin-left: 2rem;
+    }
+
+    nav ul li a {
+      text-decoration: none;
+      color: #ccc;
+      font-weight: bold;
+      transition: 0.3s;
+    }
+
+    nav ul li a:hover {
+      color: #fff;
+      text-shadow: 0 0 10px white;
+    }
+
+    .hero {
+      background: url('https://images.unsplash.com/photo-1517816985045-dfeacbabe1fd?auto=format&fit=crop&w=1470&q=80') no-repeat center center fixed;
+      background-size: cover;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      color: white;
+    }
+
+    .hero h2 {
+      font-size: 3rem;
+      text-shadow: 0 0 10px white, 0 0 20 white, 0 0 30x white;
+      animation: pulseGlow 2s infinite alternate;
+      background: rgba(0, 0, 0, 0.5);
+      padding: 1rem 2rem;
+      border-radius: 10px;
+    }
+
+    @keyframes pulseGlow {
+      from {
+        text-shadow: 0 0 10px cyan;
+      }
+      to {
+        text-shadow: 0 0 15px cyan, 0 0 30px cyan;
+      }
+    }
+
+    main {
+      max-width: 900px;
+      margin: auto;
+      padding: 3rem 2rem;
+    }
+
+    h2 {
+      margin: 2rem 0 1rem;
+      font-size: 2rem;
+      color: #fff;
+      border-bottom: 1px solid #444;
+      padding-bottom: 0.5rem;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 1rem;
+      background: #111;
+      color: #fff;
+      border: 1px solid #333;
+      border-radius: 10px;
+      margin-bottom: 1rem;
+      transition: 0.3s ease;
+    }
+
+    input:hover, textarea:hover {
+      border-color: #fff;
+      box-shadow: 0 0 10px #fff;
+    }
+
+    button {
+      background: #fff;
+      color: #000;
+      padding: 0.8rem 1.5rem;
+      border: none;
+      border-radius: 50px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s ease;
+    }
+
+    button:hover {
+      background: #ccc;
+      box-shadow: 0 0 15px #fff;
+    }
+
+    .post {
+      background: #111;
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+      border-left: 5px solid white;
+      box-shadow: 0 0 15px white;
+      border-radius: 10px;
+      transition: transform 0.3s;
+    }
+
+    .post h3 {
+      font-size: 1.5rem;
+      text-shadow: 0 0 5px white, 0 0 10px white;
+    }
+
+    .post p {
+      text-shadow: 0 0 4px rgba(255, 255, 255, 0.4);
+    }
+
+    .post:hover {
+      transform: scale(1.02);
+    }
+
+    footer {
+      text-align: center;
+      padding: 2rem;
+      background: #0a0a0a;
+      color: #777;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    section {
+      scroll-margin-top: 100px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav>
+  <h1>MyBlogSpace</h1>
+  <ul>
+    <li><a href="#create">Create</a></li>
+    <li><a href="#blogs">Posts</a></li>
+    <li><a href="#footer">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- Hero Section -->
+<div class="hero">
+  <h2>Welcome to the My Blog Space</h2>
+</div>
+
+<!-- Main Content -->
+<main>
+  <section id="create">
+    <h2>Create Blog Post</h2>
+    <input type="text" id="title" placeholder="Enter blog title..." />
+    <textarea id="content" rows="8" placeholder="Write your blog here..."></textarea>
+    <button onclick="saveBlog()">Publish Blog</button>
+  </section>
+
+  <section id="blogs">
+    <h2>Your Posts</h2>
+    <div id="blogContainer"></div>
+  </section>
+</main>
+
+<!-- Footer -->
+<footer id="footer">
+  &copy; 2025 | Designed and Created by Daksh Gulati
+</footer>
+
+<!-- Local Storage Script -->
+<script>
+  const blogContainer = document.getElementById("blogContainer");
+
+  function saveBlog() {
+    const title = document.getElementById("title").value.trim();
+    const content = document.getElementById("content").value.trim();
+
+    if (!title || !content) {
+      alert("Please enter both title and content.");
+      return;
+    }
+
+    const blogPost = {
+      title,
+      content,
+      date: new Date().toLocaleString(),
+    };
+
+    const existingPosts = JSON.parse(localStorage.getItem("blogs")) || [];
+    existingPosts.unshift(blogPost);
+    localStorage.setItem("blogs", JSON.stringify(existingPosts));
+    renderBlogs();
+
+    document.getElementById("title").value = "";
+    document.getElementById("content").value = "";
+  }
+
+  function renderBlogs() {
+    blogContainer.innerHTML = "";
+    const posts = JSON.parse(localStorage.getItem("blogs")) || [];
+
+    posts.forEach((post) => {
+      blogContainer.innerHTML += `
+        <div class="post">
+          <h3>${post.title}</h3>
+          <p>${post.content}</p>
+          <small style="color: gray;">🕒 ${post.date}</small>
+        </div>
+      `;
+    });
+  }
+
+  renderBlogs();
+</script>
+
+</body>
+</html>
